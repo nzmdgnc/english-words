@@ -71,6 +71,18 @@
       margin-bottom: 18px;
     }
 
+    .parent-link {
+      margin: -6px 0 12px;
+      font-size: 0.95rem;
+    }
+    .parent-link a {
+      color: var(--teal);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .parent-link a:hover { text-decoration: underline; }
+
+
     .brand {
       display: flex;
       align-items: baseline;
@@ -411,6 +423,7 @@
         <h1>Selims Wörter</h1>
         <p class="today" id="todayCount" aria-live="polite">Heute: 0</p>
       </div>
+      <p class="parent-link"><a href="sets.html">Wortsets ansehen</a></p>
       <label class="set-label" for="set">Wortset</label>
       <div class="select-wrap">
         <select id="set" aria-label="Wortset wählen"></select>

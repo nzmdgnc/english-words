@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F3EBE0">
+  <title>Selims Wörter · Sets</title>
+  <style>
+    :root {
+      --cream: #F3EBE0;
+      --paper: #FFFBF4;
+      --navy: #1A2744;
+      --navy-soft: #3D4D6B;
+      --muted: #6B5E4E;
+      --teal: #0E7A7B;
+      --teal-soft: #D4EDED;
+      --line: #D9CBB6;
+      --shadow: 0 10px 28px rgba(26, 39, 68, 0.08);
+      --radius: 20px;
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-l: env(safe-area-inset-left, 0px);
+      --safe-r: env(safe-area-inset-right, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%;
+      background: var(--cream);
+      color: var(--navy);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Helvetica, Arial, sans-serif;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      min-height: 100dvh;
+      padding:
+        calc(16px + var(--safe-t))
+        calc(16px + var(--safe-r))
+        calc(24px + var(--safe-b))
+        calc(16px + var(--safe-l));
+    }
+    .wrap { width: min(720px, 100%); margin: 0 auto; }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 1.6rem;
+      letter-spacing: -0.03em;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+    a.nav {
+      color: var(--teal);
+      font-weight: 700;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    a.nav:hover { text-decoration: underline; }
+    .status {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--teal-soft);
+      color: var(--navy-soft);
+      font-weight: 650;
+    }
+    .status.error {
+      background: #F6E8E2;
+      color: #8A4A32;
+    }
+    .card {
+      background: var(--paper);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--line);
+      padding: 1.1rem 1.15rem 1.2rem;
+      margin-bottom: 14px;
+    }
+    .card-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+      line-height: 1.4;
+      word-break: break-all;
+    }
+    .meta code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      background: #F0E6D6;
+      padding: 0.1em 0.35em;
+      border-radius: 6px;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--teal-soft);
+      color: var(--teal);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 0.35em 0.65em;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.98rem;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 0.65rem 0.45rem;
+      border-top: 1px solid var(--line);
+    }
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      border-top: 0;
+      padding-top: 0.2rem;
+    }
+    td.en { font-weight: 750; }
+    td.phon { color: var(--navy-soft); font-style: italic; }
+    td.ex { color: var(--navy-soft); font-size: 0.92rem; }
+    details {
+      margin-top: 12px;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--teal);
+      list-style: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    pre {
+      margin-top: 10px;
+      padding: 12px;
+      overflow: auto;
+      background: #1A2744;
+      color: #F3EBE0;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      max-height: 360px;
+    }
+    @media (max-width: 560px) {
+      table, thead, tbody, th, td, tr { display: block; }
+      thead { display: none; }
+      tr {
+        padding: 0.7rem 0;
+        border-top: 1px solid var(--line);
+      }
+      tr:first-of-type { border-top: 0; }
+      td {
+        border: 0;
+        padding: 0.15rem 0;
+      }
+      td.en::before { content: "EN · "; color: var(--muted); font-weight: 650; font-size: 0.8rem; }
+      td.de::before { content: "DE · "; color: var(--muted); font-weight: 650; font-size: 0.8rem; }
+      td.phon::before { content: "Laut · "; color: var(--muted); font-weight: 650; font-size: 0.8rem; font-style: normal; }
+      td.ex::before { content: "Satz · "; color: var(--muted); font-weight: 650; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Wortsets</h1>
+        <p class="sub">JSON-Dateien und Inhalte</p>
+      </div>
+      <a class="nav" href="./">Zur Übung →</a>
+    </header>
+    <div class="status" id="status">Sets laden…</div>
+    <div id="list"></div>
+  </div>
+  <script>
+  (function () {
+    "use strict";
+    var statusEl = document.getElementById("status");
+    var listEl = document.getElementById("list");
+
+    function esc(s) {
+      return String(s == null ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function fetchJson(url) {
+      return fetch(url, { cache: "no-store" }).then(function (r) {
+        if (!r.ok) throw new Error(url + " " + r.status);
+        return r.json();
+      });
+    }
+
+    function renderSet(file, data, isDefault) {
+      var rows = (data.words || []).map(function (w) {
+        return (
+          "<tr>" +
+          "<td class=\"en\">" + esc(w.en) + "</td>" +
+          "<td class=\"de\">" + esc(w.de) + "</td>" +
+          "<td class=\"phon\">" + esc(w.phon) + "</td>" +
+          "<td class=\"ex\">" + esc(w.ex) + "</td>" +
+          "</tr>"
+        );
+      }).join("");
+
+      var badge = isDefault ? '<span class="badge">Standard</span>' : "";
+      var raw = esc(JSON.stringify(data, null, 2));
+
+      var card = document.createElement("section");
+      card.className = "card";
+      card.innerHTML =
+        '<div class="card-top">' +
+          "<div>" +
+            "<h2>" + esc(data.label || file) + "</h2>" +
+            '<p class="meta">Datei <code>sets/' + esc(file) + "</code> · id <code>" + esc(data.id) + "</code> · " +
+            (data.words ? data.words.length : 0) + " Wörter</p>" +
+          "</div>" +
+          badge +
+        "</div>" +
+        "<table>" +
+          "<thead><tr><th>Englisch</th><th>Deutsch</th><th>Aussprache</th><th>Satz</th></tr></thead>" +
+          "<tbody>" + rows + "</tbody>" +
+        "</table>" +
+        "<details><summary>JSON anzeigen</summary><pre>" + raw + "</pre></details>";
+      listEl.appendChild(card);
+    }
+
+    fetchJson("sets/manifest.json")
+      .then(function (manifest) {
+        var files = (manifest.sets || []).map(function (s) { return s.file; });
+        var defaultId = manifest.defaultSetId;
+        return Promise.all(files.map(function (file) {
+          return fetchJson("sets/" + file).then(function (data) {
+            return { file: file, data: data };
+          });
+        })).then(function (items) {
+          statusEl.textContent =
+            items.length + " Set" + (items.length === 1 ? "" : "s") +
+            " · Standard: " + (defaultId || "—");
+          items.forEach(function (item) {
+            renderSet(item.file, item.data, item.data.id === defaultId);
+          });
+        });
+      })
+      .catch(function () {
+        statusEl.className = "status error";
+        statusEl.textContent = "Sets konnten nicht geladen werden. Seite neu laden.";
+      });
+  })();
+  </script>
+</body>
+</html>
