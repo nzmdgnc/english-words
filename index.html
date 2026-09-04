@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Selims Wörter">
+  <meta name="theme-color" content="#F3EBE0">
+  <meta name="color-scheme" content="light">
+  <title>Selims Wörter</title>
+  <style>
+    :root {
+      --cream: #F3EBE0;
+      --cream-dark: #E6D9C6;
+      --paper: #FFFBF4;
+      --navy: #1A2744;
+      --navy-soft: #3D4D6B;
+      --muted: #6B5E4E;
+      --teal: #0E7A7B;
+      --teal-dark: #0A5C5D;
+      --teal-soft: #D4EDED;
+      --ok: #1F6B45;
+      --ok-bg: #E3F2E8;
+      --again: #8A4A32;
+      --again-bg: #F6E8E2;
+      --line: #D9CBB6;
+      --shadow: 0 10px 28px rgba(26, 39, 68, 0.08);
+      --radius: 20px;
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-l: env(safe-area-inset-left, 0px);
+      --safe-r: env(safe-area-inset-right, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--cream);
+      color: var(--navy);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Helvetica, Arial, sans-serif;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100dvh;
+      padding:
+        calc(16px + var(--safe-t))
+        calc(16px + var(--safe-r))
+        calc(24px + var(--safe-b))
+        calc(16px + var(--safe-l));
+    }
+
+    button, input, select { font: inherit; color: inherit; }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+
+    .wrap {
+      width: min(440px, 100%);
+      margin: 0 auto;
+    }
+
+    header.app {
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      font-size: 1.55rem;
+      font-weight: 750;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .today {
+      font-size: 0.8rem;
+      font-weight: 650;
+      color: var(--teal-dark);
+      background: var(--teal-soft);
+      padding: 0.28rem 0.6rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .set-label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      width: 8px;
+      height: 8px;
+      border-right: 2px solid var(--navy);
+      border-bottom: 2px solid var(--navy);
+      transform: translateY(-70%) rotate(45deg);
+      pointer-events: none;
+    }
+
+    select#set {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      background: var(--paper);
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      padding: 0.95rem 2.6rem 0.95rem 1rem;
+      font-size: 1rem;
+      font-weight: 650;
+      box-shadow: var(--shadow);
+    }
+
+    select#set:focus {
+      outline: 3px solid rgba(14, 122, 123, 0.28);
+      outline-offset: 2px;
+      border-color: var(--teal);
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 16px 2px 0;
+    }
+
+    .progress-text {
+      font-size: 1.02rem;
+      font-weight: 700;
+    }
+
+    .dots {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: transparent;
+      border: 2px solid var(--cream-dark);
+      box-shadow: inset 0 0 0 0 var(--teal);
+    }
+
+    .dot.half {
+      background: linear-gradient(90deg, var(--teal) 50%, transparent 50%);
+      border-color: var(--teal);
+    }
+
+    .dot.full {
+      background: var(--teal);
+      border-color: var(--teal);
+    }
+
+    .card {
+      background: var(--paper);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.45rem 1.2rem 1.3rem;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .meaning {
+      font-size: clamp(2.05rem, 8.6vw, 2.7rem);
+      font-weight: 780;
+      letter-spacing: -0.035em;
+      line-height: 1.12;
+      margin-bottom: 0.45rem;
+    }
+
+    .phonetic {
+      font-size: 1.12rem;
+      color: var(--teal-dark);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.15rem;
+    }
+
+    .tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 1.2rem;
+    }
+
+    .icon-btn, .text-btn {
+      min-height: 52px;
+      border-radius: 14px;
+      border: 1.5px solid var(--line);
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 650;
+      color: var(--navy);
+    }
+
+    .icon-btn {
+      width: 52px;
+      min-width: 52px;
+      padding: 0;
+    }
+
+    .text-btn {
+      padding: 0 14px;
+      font-size: 0.95rem;
+    }
+
+    .icon-btn:hover, .text-btn:hover, .icon-btn:focus-visible, .text-btn:focus-visible {
+      border-color: var(--teal);
+      outline: none;
+    }
+
+    .icon-btn:focus-visible, .text-btn:focus-visible, .primary:focus-visible, .ghost:focus-visible {
+      box-shadow: 0 0 0 3px rgba(14, 122, 123, 0.28);
+    }
+
+    .icon-btn:active, .text-btn:active, .primary:active, .ghost:active {
+      transform: translateY(1px);
+    }
+
+    .icon-btn.listening {
+      background: var(--teal-soft);
+      border-color: var(--teal);
+    }
+
+    .icon-btn svg, .text-btn svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
+
+    form.answer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    label.sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    #english {
+      width: 100%;
+      min-height: 64px;
+      border: 2px solid var(--navy);
+      border-radius: 16px;
+      background: #fff;
+      padding: 0.85rem 1rem;
+      font-size: 1.45rem;
+      font-weight: 650;
+      letter-spacing: 0.01em;
+    }
+
+    #english:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(14, 122, 123, 0.16);
+    }
+
+    .primary {
+      min-height: 60px;
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 750;
+    }
+
+    .primary:disabled {
+      opacity: 0.45;
+    }
+
+    .primary:not(:disabled):hover { background: var(--teal-dark); }
+
+    .ghost {
+      min-height: 52px;
+      width: 100%;
+      margin-top: 10px;
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      background: transparent;
+      font-size: 1rem;
+      font-weight: 650;
+      color: var(--navy-soft);
+    }
+
+    .sentence {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: #F7F1E6;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      line-height: 1.4;
+      color: var(--navy-soft);
+    }
+
+    .sentence[hidden], [hidden] { display: none !important; }
+
+    .feedback {
+      margin-top: 14px;
+      min-height: 1.2em;
+      border-radius: 14px;
+      padding: 0;
+    }
+
+    .feedback.show {
+      padding: 12px 14px;
+    }
+
+    .feedback.ok {
+      background: var(--ok-bg);
+      color: var(--ok);
+    }
+
+    .feedback.again {
+      background: var(--again-bg);
+      color: var(--again);
+    }
+
+    .feedback .title {
+      font-weight: 800;
+      font-size: 1.15rem;
+    }
+
+    .feedback .spelling {
+      margin-top: 4px;
+      font-size: 1.08rem;
+      font-weight: 650;
+    }
+
+    .done {
+      text-align: center;
+      padding: 1.6rem 0.6rem 0.4rem;
+    }
+
+    .done .mark {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: var(--teal-soft);
+      display: grid;
+      place-items: center;
+    }
+
+    .done h2 {
+      font-size: 1.85rem;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .done p {
+      color: var(--navy-soft);
+      font-size: 1.05rem;
+      margin-bottom: 22px;
+      line-height: 1.4;
+    }
+
+    .noscript {
+      padding: 1rem;
+      background: var(--again-bg);
+      border-radius: 12px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="app">
+      <div class="brand">
+        <h1>Selims Wörter</h1>
+        <p class="today" id="todayCount" aria-live="polite">Heute: 0</p>
+      </div>
+      <label class="set-label" for="set">Wortset</label>
+      <div class="select-wrap">
+        <select id="set" aria-label="Wortset wählen"></select>
+      </div>
+      <div class="progress-row">
+        <p class="progress-text" id="progressText">0 von 5 sitzen</p>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="card" id="drill" aria-label="Übung">
+        <p class="meaning" id="meaning"></p>
+        <p class="phonetic" id="phonetic"></p>
+        <div class="tools">
+          <button type="button" class="icon-btn" id="speakWord" aria-label="Englisch vorlesen" title="Lautsprecher">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 9.5v5h3.2L12 18.8V5.2L7.2 9.5H4z" fill="currentColor"/>
+              <path d="M16.2 8.2a4.2 4.2 0 010 7.6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M18.7 5.6a7.6 7.6 0 010 12.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button type="button" class="text-btn" id="speakSentence" aria-label="Beispielsatz vorlesen">Satz hören</button>
+          <button type="button" class="icon-btn" id="mic" aria-label="Sprechen" title="Sprechen" hidden>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="9" y="3.5" width="6" height="11" rx="3" fill="currentColor"/>
+              <path d="M6.5 11.5a5.5 5.5 0 0011 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 17v3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <form class="answer" id="form" autocomplete="off">
+          <label class="sr" for="english">Englisch schreiben</label>
+          <input
+            id="english"
+            name="english"
+            type="text"
+            lang="en"
+            inputmode="text"
+            enterkeyhint="go"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="Englisch schreiben…"
+            aria-describedby="feedback"
+          >
+          <button type="submit" class="primary" id="submit">Prüfen</button>
+        </form>
+        <button type="button" class="ghost" id="reveal">Satz anzeigen</button>
+        <p class="sentence" id="sentence" hidden></p>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="card done" id="done" hidden aria-label="Fertig">
+        <div class="mark" aria-hidden="true">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12.5l4.2 4.2L19 7.5" stroke="#0E7A7B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 id="doneTitle">Alle sitzen!</h2>
+        <p id="doneText">Du hast alle Wörter aus diesem Set richtig geschrieben.</p>
+        <button type="button" class="primary" id="retry">Nochmal üben</button>
+      </section>
+    </main>
+  </div>
+
+  <noscript>
+    <p class="noscript">Bitte JavaScript einschalten, damit Selim üben kann.</p>
+  </noscript>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var STORAGE_KEY = "selims-woerter-v1";
+    var DEFAULT_SET = "sep1";
+
+    var SETS = [
+      {
+        id: "first5",
+        label: "26.08 · Erste fünf",
+        words: [
+          { en: "baggage claim", de: "Gepäckausgabe", phon: "BÄ-gidsch kleim", ex: "Where is the baggage claim?" },
+          { en: "suitcase", de: "Koffer", phon: "SUUT-kees", ex: "This is my suitcase." },
+          { en: "gate", de: "Flugsteig", phon: "GEIT", ex: "Where is the gate?" },
+          { en: "flight", de: "Flug", phon: "FLAIT", ex: "My flight is at 4." },
+          { en: "delayed", de: "verspätet", phon: "di-LEID", ex: "The flight is delayed." }
+        ]
+      },
+      {
+        id: "sep1",
+        label: "01.09 · Flughafen 2",
+        words: [
+          { en: "aisle", de: "Mittelgang", phon: "AIL", ex: "I want an aisle seat." },
+          { en: "window seat", de: "Fensterplatz", phon: "WIN-do siit", ex: "I want a window seat." },
+          { en: "take off", de: "abheben", phon: "TEIK off", ex: "We take off now." },
+          { en: "landing", de: "Landung", phon: "LÄN-ding", ex: "The landing is soon." },
+          { en: "customs", de: "Zoll", phon: "KASS-toms", ex: "Where is customs?" }
+        ]
+      },
+      {
+        id: "more",
+        label: "Weitere Flughafen-Wörter",
+        words: [
+          { en: "boarding pass", de: "Bordkarte", phon: "BOR-ding Päss", ex: "This is my boarding pass." },
+          { en: "passport", de: "Reisepass", phon: "PÄSS-port", ex: "This is my passport." },
+          { en: "check-in", de: "Check-in / Einchecken", phon: "TSCHEK-in", ex: "Where is the check-in?" },
+          { en: "security", de: "Sicherheitskontrolle", phon: "si-KJUR-iti", ex: "Where is security?" },
+          { en: "boarding", de: "Einsteigen / Boarding", phon: "BOR-ding", ex: "Boarding starts now." },
+          { en: "Yeah", de: "ja / genau (locker)", phon: "Jä", ex: "Yeah, I’m coming." }
+        ]
+      }
+    ];
+
+    var setById = {};
+    SETS.forEach(function (s) { setById[s.id] = s; });
+
+    var el = {
+      set: document.getElementById("set"),
+      todayCount: document.getElementById("todayCount"),
+      progressText: document.getElementById("progressText"),
+      dots: document.getElementById("dots"),
+      drill: document.getElementById("drill"),
+      done: document.getElementById("done"),
+      doneTitle: document.getElementById("doneTitle"),
+      meaning: document.getElementById("meaning"),
+      phonetic: document.getElementById("phonetic"),
+      speakWord: document.getElementById("speakWord"),
+      speakSentence: document.getElementById("speakSentence"),
+      mic: document.getElementById("mic"),
+      form: document.getElementById("form"),
+      english: document.getElementById("english"),
+      submit: document.getElementById("submit"),
+      reveal: document.getElementById("reveal"),
+      sentence: document.getElementById("sentence"),
+      feedback: document.getElementById("feedback"),
+      retry: document.getElementById("retry")
+    };
+
+    var state = {
+      activeSetId: DEFAULT_SET,
+      date: todayStr(),
+      learnedToday: 0,
+      progress: {},
+      currentEn: null,
+      showingSpelling: false,
+      hintTimer: null,
+      rec: null
+    };
+
+    SETS.forEach(function (s) {
+      var opt = document.createElement("option");
+      opt.value = s.id;
+      opt.textContent = s.label;
+      el.set.appendChild(opt);
+    });
+
+    function todayStr() {
+      var d = new Date();
+      var m = String(d.getMonth() + 1);
+      var day = String(d.getDate());
+      if (m.length < 2) m = "0" + m;
+      if (day.length < 2) day = "0" + day;
+      return d.getFullYear() + "-" + m + "-" + day;
+    }
+
+    function emptyProgress() {
+      var p = {};
+      SETS.forEach(function (s) {
+        p[s.id] = {};
+        s.words.forEach(function (w) { p[s.id][w.en] = 0; });
+      });
+      return p;
+    }
+
+    function load() {
+      var data = {
+        activeSetId: DEFAULT_SET,
+        date: todayStr(),
+        learnedToday: 0,
+        progress: emptyProgress()
+      };
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return data;
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          if (setById[parsed.activeSetId]) data.activeSetId = parsed.activeSetId;
+          var base = emptyProgress();
+          if (parsed.progress && typeof parsed.progress === "object") {
+            SETS.forEach(function (s) {
+              s.words.forEach(function (w) {
+                var n = parsed.progress[s.id] && parsed.progress[s.id][w.en];
+                base[s.id][w.en] = n >= 2 ? 2 : (n === 1 ? 1 : 0);
+              });
+            });
+          }
+          data.progress = base;
+          if (parsed.date === todayStr() && typeof parsed.learnedToday === "number") {
+            data.learnedToday = Math.max(0, parsed.learnedToday | 0);
+          } else {
+            data.learnedToday = 0;
+            data.date = todayStr();
+          }
+        }
+      } catch (e) {}
+      return data;
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          activeSetId: state.activeSetId,
+          date: todayStr(),
+          learnedToday: state.learnedToday,
+          progress: state.progress
+        }));
+      } catch (e) {}
+    }
+
+    function currentSet() {
+      return setById[state.activeSetId];
+    }
+
+    function countsFor(setId) {
+      return state.progress[setId] || {};
+    }
+
+    function learnedCount(setId) {
+      var set = setById[setId];
+      var c = countsFor(setId);
+      var n = 0;
+      set.words.forEach(function (w) {
+        if ((c[w.en] || 0) >= 2) n += 1;
+      });
+      return n;
+    }
+
+    function unlearned(setId, exceptEn) {
+      var set = setById[setId];
+      var c = countsFor(setId);
+      return set.words.filter(function (w) {
+        return (c[w.en] || 0) < 2 && w.en !== exceptEn;
+      });
+    }
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function normalize(s) {
+      return String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function wordByEn(en) {
+      var set = currentSet();
+      for (var i = 0; i < set.words.length; i++) {
+        if (set.words[i].en === en) return set.words[i];
+      }
+      return null;
+    }
+
+    function pickNext(exceptEn) {
+      var pool = unlearned(state.activeSetId, exceptEn);
+      if (!pool.length) {
+        pool = unlearned(state.activeSetId);
+      }
+      if (!pool.length) return null;
+      return shuffle(pool)[0];
+    }
+
+    function hasSpeech() {
+      return typeof window.speechSynthesis !== "undefined";
+    }
+
+    function recognitionCtor() {
+      return window.SpeechRecognition || window.webkitSpeechRecognition || null;
+    }
+
+    function speak(text) {
+      if (!hasSpeech() || !text) return;
+      try {
+        window.speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US";
+        u.rate = 0.9;
+        var voices = window.speechSynthesis.getVoices() || [];
+        var voice = null;
+        for (var i = 0; i < voices.length; i++) {
+          if (voices[i].lang && voices[i].lang.toLowerCase().indexOf("en-us") === 0) {
+            voice = voices[i];
+            break;
+          }
+        }
+        if (!voice) {
+          for (var j = 0; j < voices.length; j++) {
+            if (voices[j].lang && voices[j].lang.toLowerCase().indexOf("en") === 0) {
+              voice = voices[j];
+              break;
+            }
+          }
+        }
+        if (voice) u.voice = voice;
+        window.speechSynthesis.speak(u);
+      } catch (e) {}
+    }
+
+    function clearFeedback() {
+      if (state.hintTimer) {
+        clearTimeout(state.hintTimer);
+        state.hintTimer = null;
+      }
+      state.showingSpelling = false;
+      el.feedback.className = "feedback";
+      el.feedback.innerHTML = "";
+    }
+
+    function showFeedback(kind, title, extra) {
+      el.feedback.className = "feedback show " + kind;
+      var html = '<div class="title">' + title + "</div>";
+      if (extra) html += '<div class="spelling">' + extra + "</div>";
+      el.feedback.innerHTML = html;
+    }
+
+    function updateChrome() {
+      var set = currentSet();
+      var total = set.words.length;
+      var learned = learnedCount(set.id);
+      el.progressText.textContent = learned + " von " + total + " sitzen";
+      el.todayCount.textContent = "Heute: " + state.learnedToday;
+      el.dots.innerHTML = "";
+      var c = countsFor(set.id);
+      set.words.forEach(function (w) {
+        var n = c[w.en] || 0;
+        var d = document.createElement("span");
+        d.className = "dot" + (n >= 2 ? " full" : n === 1 ? " half" : "");
+        el.dots.appendChild(d);
+      });
+    }
+
+    function focusInput() {
+      window.requestAnimationFrame(function () {
+        try {
+          el.english.focus({ preventScroll: true });
+        } catch (e) {
+          el.english.focus();
+        }
+      });
+    }
+
+    function showDone() {
+      el.drill.hidden = true;
+      el.done.hidden = false;
+      var n = currentSet().words.length;
+      el.doneTitle.textContent = "Alle sitzen!";
+      el.doneText.textContent = n === 6
+        ? "Du hast alle sechs Wörter richtig geschrieben."
+        : "Du hast alle Wörter aus diesem Set richtig geschrieben.";
+      updateChrome();
+    }
+
+    function renderCard(word) {
+      state.currentEn = word.en;
+      el.drill.hidden = false;
+      el.done.hidden = true;
+      el.meaning.textContent = word.de;
+      el.phonetic.textContent = word.phon;
+      el.sentence.textContent = word.ex;
+      el.sentence.hidden = true;
+      el.reveal.hidden = false;
+      el.english.value = "";
+      el.submit.disabled = true;
+      clearFeedback();
+      updateChrome();
+      focusInput();
+    }
+
+    function showCurrent() {
+      if (learnedCount(state.activeSetId) >= currentSet().words.length) {
+        showDone();
+        return;
+      }
+      var word = state.currentEn ? wordByEn(state.currentEn) : null;
+      if (!word || (countsFor(state.activeSetId)[word.en] || 0) >= 2) {
+        word = pickNext();
+      }
+      if (!word) {
+        showDone();
+        return;
+      }
+      renderCard(word);
+    }
+
+    function activateSet(id, resetSession) {
+      if (!setById[id]) id = DEFAULT_SET;
+      state.activeSetId = id;
+      el.set.value = id;
+      if (resetSession) {
+        currentSet().words.forEach(function (w) {
+          state.progress[id][w.en] = 0;
+        });
+      }
+      state.currentEn = null;
+      save();
+      showCurrent();
+    }
+
+    function checkAnswer(raw) {
+      var word = wordByEn(state.currentEn);
+      if (!word) return;
+      var got = normalize(raw);
+      if (!got) return;
+      var ok = got === normalize(word.en);
+      if (ok) {
+        var before = countsFor(state.activeSetId)[word.en] || 0;
+        var after = Math.min(2, before + 1);
+        state.progress[state.activeSetId][word.en] = after;
+        if (before < 2 && after >= 2) {
+          if (state.date !== todayStr()) {
+            state.date = todayStr();
+            state.learnedToday = 0;
+          }
+          state.learnedToday += 1;
+        }
+        save();
+        updateChrome();
+        showFeedback("ok", "Richtig!");
+        el.submit.disabled = true;
+        window.setTimeout(function () {
+          if (learnedCount(state.activeSetId) >= currentSet().words.length) {
+            showDone();
+          } else {
+            var next = pickNext(word.en);
+            renderCard(next);
+          }
+        }, 700);
+      } else {
+        showFeedback("again", "Noch mal", "Richtig ist: " + word.en);
+        state.showingSpelling = true;
+        el.english.value = "";
+        el.submit.disabled = true;
+        focusInput();
+        if (state.hintTimer) clearTimeout(state.hintTimer);
+        state.hintTimer = window.setTimeout(function () {
+          state.showingSpelling = false;
+          state.hintTimer = null;
+          var spell = el.feedback.querySelector(".spelling");
+          if (spell) spell.remove();
+        }, 2500);
+      }
+    }
+
+    el.set.addEventListener("change", function () {
+      activateSet(el.set.value, false);
+    });
+
+    el.form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      checkAnswer(el.english.value);
+    });
+
+    el.english.addEventListener("input", function () {
+      el.submit.disabled = !normalize(el.english.value);
+      if (state.showingSpelling) {
+        var spell = el.feedback.querySelector(".spelling");
+        if (spell) spell.remove();
+        state.showingSpelling = false;
+      }
+    });
+
+    el.speakWord.addEventListener("click", function () {
+      var w = wordByEn(state.currentEn);
+      if (w) speak(w.en);
+    });
+
+    el.speakSentence.addEventListener("click", function () {
+      var w = wordByEn(state.currentEn);
+      if (w) speak(w.ex);
+    });
+
+    el.reveal.addEventListener("click", function () {
+      el.sentence.hidden = false;
+      el.reveal.hidden = true;
+    });
+
+    el.retry.addEventListener("click", function () {
+      activateSet(state.activeSetId, true);
+    });
+
+    if (!hasSpeech()) {
+      el.speakWord.hidden = true;
+      el.speakSentence.hidden = true;
+    } else if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = function () {
+        window.speechSynthesis.getVoices();
+      };
+    }
+
+    var SR = recognitionCtor();
+    if (SR) {
+      el.mic.hidden = false;
+      var rec = new SR();
+      rec.lang = "en-US";
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      rec.continuous = false;
+      rec.onresult = function (ev) {
+        var t = ev.results && ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript;
+        if (t) {
+          el.english.value = t.trim();
+          el.submit.disabled = !normalize(el.english.value);
+        }
+        el.mic.classList.remove("listening");
+      };
+      rec.onerror = function (ev) {
+        el.mic.classList.remove("listening");
+        if (ev && (ev.error === "not-allowed" || ev.error === "service-not-allowed")) {
+          el.mic.hidden = true;
+        }
+      };
+      rec.onend = function () {
+        el.mic.classList.remove("listening");
+      };
+      state.rec = rec;
+      el.mic.addEventListener("click", function () {
+        try {
+          el.mic.classList.add("listening");
+          rec.start();
+        } catch (e) {
+          el.mic.classList.remove("listening");
+        }
+      });
+    }
+
+    var loaded = load();
+    state.activeSetId = loaded.activeSetId;
+    state.date = loaded.date;
+    state.learnedToday = loaded.learnedToday;
+    state.progress = loaded.progress;
+    activateSet(state.activeSetId, false);
+  })();
+  </script>
+</body>
+</html>
