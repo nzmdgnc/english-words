@@ -488,46 +488,8 @@
 
     var STORAGE_KEY = "selims-woerter-v1";
     var DEFAULT_SET = "sep1";
-
-    var SETS = [
-      {
-        id: "first5",
-        label: "26.08 · Erste fünf",
-        words: [
-          { en: "baggage claim", de: "Gepäckausgabe", phon: "BÄ-gidsch kleim", ex: "Where is the baggage claim?" },
-          { en: "suitcase", de: "Koffer", phon: "SUUT-kees", ex: "This is my suitcase." },
-          { en: "gate", de: "Flugsteig", phon: "GEIT", ex: "Where is the gate?" },
-          { en: "flight", de: "Flug", phon: "FLAIT", ex: "My flight is at 4." },
-          { en: "delayed", de: "verspätet", phon: "di-LEID", ex: "The flight is delayed." }
-        ]
-      },
-      {
-        id: "sep1",
-        label: "01.09 · Flughafen 2",
-        words: [
-          { en: "aisle", de: "Mittelgang", phon: "AIL", ex: "I want an aisle seat." },
-          { en: "window seat", de: "Fensterplatz", phon: "WIN-do siit", ex: "I want a window seat." },
-          { en: "take off", de: "abheben", phon: "TEIK off", ex: "We take off now." },
-          { en: "landing", de: "Landung", phon: "LÄN-ding", ex: "The landing is soon." },
-          { en: "customs", de: "Zoll", phon: "KASS-toms", ex: "Where is customs?" }
-        ]
-      },
-      {
-        id: "more",
-        label: "Weitere Flughafen-Wörter",
-        words: [
-          { en: "boarding pass", de: "Bordkarte", phon: "BOR-ding Päss", ex: "This is my boarding pass." },
-          { en: "passport", de: "Reisepass", phon: "PÄSS-port", ex: "This is my passport." },
-          { en: "check-in", de: "Check-in / Einchecken", phon: "TSCHEK-in", ex: "Where is the check-in?" },
-          { en: "security", de: "Sicherheitskontrolle", phon: "si-KJUR-iti", ex: "Where is security?" },
-          { en: "boarding", de: "Einsteigen / Boarding", phon: "BOR-ding", ex: "Boarding starts now." },
-          { en: "Yeah", de: "ja / genau (locker)", phon: "Jä", ex: "Yeah, I’m coming." }
-        ]
-      }
-    ];
-
+    var SETS = [];
     var setById = {};
-    SETS.forEach(function (s) { setById[s.id] = s; });
 
     var el = {
       set: document.getElementById("set"),
@@ -537,6 +499,7 @@
       drill: document.getElementById("drill"),
       done: document.getElementById("done"),
       doneTitle: document.getElementById("doneTitle"),
+      doneText: document.getElementById("doneText"),
       meaning: document.getElementById("meaning"),
       phonetic: document.getElementById("phonetic"),
       speakWord: document.getElementById("speakWord"),
@@ -559,15 +522,9 @@
       currentEn: null,
       showingSpelling: false,
       hintTimer: null,
-      rec: null
+      rec: null,
+      ready: false
     };
-
-    SETS.forEach(function (s) {
-      var opt = document.createElement("option");
-      opt.value = s.id;
-      opt.textContent = s.label;
-      el.set.appendChild(opt);
-    });
 
     function todayStr() {
       var d = new Date();
@@ -770,11 +727,8 @@
     function showDone() {
       el.drill.hidden = true;
       el.done.hidden = false;
-      var n = currentSet().words.length;
       el.doneTitle.textContent = "Alle sitzen!";
-      el.doneText.textContent = n === 6
-        ? "Du hast alle sechs Wörter richtig geschrieben."
-        : "Du hast alle Wörter aus diesem Set richtig geschrieben.";
+      el.doneText.textContent = "Du hast alle Wörter aus diesem Set richtig geschrieben.";
       updateChrome();
     }
 
@@ -784,6 +738,8 @@
       el.done.hidden = true;
       el.meaning.textContent = word.de;
       el.phonetic.textContent = word.phon;
+      el.phonetic.hidden = false;
+      el.form.hidden = false;
       el.sentence.textContent = word.ex;
       el.sentence.hidden = true;
       el.reveal.hidden = false;
@@ -870,11 +826,13 @@
     }
 
     el.set.addEventListener("change", function () {
+      if (!state.ready) return;
       activateSet(el.set.value, false);
     });
 
     el.form.addEventListener("submit", function (e) {
       e.preventDefault();
+      if (!state.ready) return;
       checkAnswer(el.english.value);
     });
 
@@ -952,12 +910,101 @@
       });
     }
 
-    var loaded = load();
-    state.activeSetId = loaded.activeSetId;
-    state.date = loaded.date;
-    state.learnedToday = loaded.learnedToday;
-    state.progress = loaded.progress;
-    activateSet(state.activeSetId, false);
+    function showLoadMessage(msg, isError) {
+      el.drill.hidden = false;
+      el.done.hidden = true;
+      el.meaning.textContent = msg;
+      el.phonetic.textContent = "";
+      el.phonetic.hidden = true;
+      el.sentence.hidden = true;
+      el.reveal.hidden = true;
+      el.form.hidden = true;
+      el.speakWord.hidden = true;
+      el.speakSentence.hidden = true;
+      el.mic.hidden = true;
+      clearFeedback();
+      if (isError) {
+        el.progressText.textContent = "—";
+        el.dots.innerHTML = "";
+      } else {
+        el.progressText.textContent = "Wörter laden…";
+        el.dots.innerHTML = "";
+      }
+    }
+
+    function fetchJson(url) {
+      return fetch(url).then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status + " for " + url);
+        return res.json();
+      });
+    }
+
+    function buildDropdown() {
+      el.set.innerHTML = "";
+      SETS.forEach(function (s) {
+        var opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.label;
+        el.set.appendChild(opt);
+      });
+    }
+
+    function startApp() {
+      var loaded = load();
+      state.activeSetId = loaded.activeSetId;
+      state.date = loaded.date;
+      state.learnedToday = loaded.learnedToday;
+      state.progress = loaded.progress;
+      state.ready = true;
+
+      // Restore speaker/mic visibility after load UI hid them
+      if (hasSpeech()) {
+        el.speakWord.hidden = false;
+        el.speakSentence.hidden = false;
+      }
+      if (state.rec) el.mic.hidden = false;
+
+      el.form.hidden = false;
+      el.phonetic.hidden = false;
+      activateSet(state.activeSetId, false);
+    }
+
+    showLoadMessage("Wörter laden…", false);
+
+    fetchJson("sets/manifest.json")
+      .then(function (manifest) {
+        if (manifest && manifest.defaultSetId) {
+          DEFAULT_SET = manifest.defaultSetId;
+        }
+        var entries = (manifest && manifest.sets) || [];
+        var chain = Promise.resolve();
+        var loadedSets = [];
+        entries.forEach(function (entry) {
+          chain = chain.then(function () {
+            return fetchJson("sets/" + entry.file).then(function (set) {
+              loadedSets.push(set);
+            });
+          });
+        });
+        return chain.then(function () {
+          return loadedSets;
+        });
+      })
+      .then(function (loadedSets) {
+        if (!loadedSets.length) throw new Error("No sets");
+        SETS = loadedSets;
+        setById = {};
+        SETS.forEach(function (s) { setById[s.id] = s; });
+        if (!setById[DEFAULT_SET]) DEFAULT_SET = SETS[0].id;
+        buildDropdown();
+        startApp();
+      })
+      .catch(function () {
+        showLoadMessage(
+          "Wörter konnten nicht geladen werden. Internet prüfen und neu laden.",
+          true
+        );
+      });
   })();
   </script>
 </body>

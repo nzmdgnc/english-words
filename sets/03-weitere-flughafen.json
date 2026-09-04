@@ -1,0 +1,13 @@
+{
+  "id": "more",
+  "label": "03 · Weitere Flughafen-Wörter",
+  "words": [
+    { "en": "boarding pass", "de": "Bordkarte", "phon": "BOR-ding Päss", "ex": "This is my boarding pass." },
+    { "en": "passport", "de": "Reisepass", "phon": "PÄSS-port", "ex": "This is my passport." },
+    { "en": "check-in", "de": "Check-in / Einchecken", "phon": "TSCHEK-in", "ex": "Where is the check-in?" },
+    { "en": "security", "de": "Sicherheitskontrolle", "phon": "si-KJUR-iti", "ex": "Where is security?" },
+    { "en": "boarding", "de": "Einsteigen / Boarding", "phon": "BOR-ding", "ex": "Boarding starts now." },
+    { "en": "Yeah", "de": "ja / genau (locker)", "phon": "Jä", "ex": "Yeah, I’m coming." },
+    { "en": "departure", "de": "Abflug", "phon": "di-PAR-tscher", "ex": "What time is departure?" }
+  ]
+}

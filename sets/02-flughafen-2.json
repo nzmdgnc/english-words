@@ -1,0 +1,11 @@
+{
+  "id": "sep1",
+  "label": "02 · Flughafen 2",
+  "words": [
+    { "en": "aisle", "de": "Mittelgang", "phon": "AIL", "ex": "I want an aisle seat." },
+    { "en": "window seat", "de": "Fensterplatz", "phon": "WIN-do siit", "ex": "I want a window seat." },
+    { "en": "take off", "de": "abheben", "phon": "TEIK off", "ex": "We take off now." },
+    { "en": "landing", "de": "Landung", "phon": "LÄN-ding", "ex": "The landing is soon." },
+    { "en": "customs", "de": "Zoll", "phon": "KASS-toms", "ex": "Where is customs?" }
+  ]
+}

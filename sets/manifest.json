@@ -1,0 +1,8 @@
+{
+  "defaultSetId": "sep1",
+  "sets": [
+    { "file": "01-flughafen-1.json" },
+    { "file": "02-flughafen-2.json" },
+    { "file": "03-weitere-flughafen.json" }
+  ]
+}

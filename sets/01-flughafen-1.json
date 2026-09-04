@@ -1,0 +1,11 @@
+{
+  "id": "first5",
+  "label": "01 · Flughafen 1",
+  "words": [
+    { "en": "baggage claim", "de": "Gepäckausgabe", "phon": "BÄ-gidsch kleim", "ex": "Where is the baggage claim?" },
+    { "en": "suitcase", "de": "Koffer", "phon": "SUUT-kees", "ex": "This is my suitcase." },
+    { "en": "gate", "de": "Flugsteig", "phon": "GEIT", "ex": "Where is the gate?" },
+    { "en": "flight", "de": "Flug", "phon": "FLAIT", "ex": "My flight is at 4." },
+    { "en": "delayed", "de": "verspätet", "phon": "di-LEID", "ex": "The flight is delayed." }
+  ]
+}
