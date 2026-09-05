@@ -49,6 +49,12 @@
       "de": "Ankunft",
       "phon": "a-RAI-wel",
       "ex": "What time is arrival?"
+    },
+    {
+      "en": "seatbelt",
+      "de": "Anschnallgurt",
+      "phon": "SIIT-belt",
+      "ex": "Please fasten your seatbelt."
     }
   ]
 }
