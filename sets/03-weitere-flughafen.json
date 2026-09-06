@@ -55,6 +55,12 @@
       "de": "Anschnallgurt",
       "phon": "SIIT-belt",
       "ex": "Please fasten your seatbelt."
+    },
+    {
+      "en": "carry-on",
+      "de": "Handgepäck",
+      "phon": "KÄ-ri-on",
+      "ex": "This is my carry-on."
     }
   ]
 }
