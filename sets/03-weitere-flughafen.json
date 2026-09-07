@@ -61,6 +61,12 @@
       "de": "Handgepäck",
       "phon": "KÄ-ri-on",
       "ex": "This is my carry-on."
+    },
+    {
+      "en": "terminal",
+      "de": "Terminal",
+      "phon": "TÖR-mi-nel",
+      "ex": "Where is the terminal?"
     }
   ]
 }
