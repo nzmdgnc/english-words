@@ -67,6 +67,12 @@
       "de": "Terminal",
       "phon": "TÖR-mi-nel",
       "ex": "Where is the terminal?"
+    },
+    {
+      "en": "ticket",
+      "de": "Flugticket",
+      "phon": "TI-ket",
+      "ex": "Where is my ticket?"
     }
   ]
 }
