@@ -73,6 +73,12 @@
       "de": "Flugticket",
       "phon": "TI-ket",
       "ex": "Where is my ticket?"
+    },
+    {
+      "en": "passenger",
+      "de": "Passagier / Fluggast",
+      "phon": "PÄS-sen-dscher",
+      "ex": "I am a passenger."
     }
   ]
 }
